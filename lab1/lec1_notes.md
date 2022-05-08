@@ -49,7 +49,7 @@ After initializing the PCI bus and all the important devices the BIOS knows abou
 such as a floppy, hard drive, or CD-ROM. Eventually, when it finds a bootable disk, the BIOS reads the boot loader   
 from the disk and transfers control to it.   
 
-*Exercise 2*
+***[Exercise 2]***   
 use `si` to trace into ROM BIOS for a few instructions and gusess what it may be doing.
 
 term1: make qemu-nox-gdb   
@@ -107,3 +107,22 @@ If the disk is bootable, the first sector is called the *boot sector*, since thi
 
 When the BIOS finds a bootable floppy or hard disk, it loads the 512-byte boot sector into memory at physical addresses   
 0x7c00 through 0x7dff, then jump to CS:IP()
+
+***[exercise 3]***
+1. Set a breakpoint at address 0x7c00, which is where the boot sector will be loaded.
+2. Trace into bootmain() in boot/main.c, and then into readsect().
+
+Be able to answer the following questions:
+- At what point does the processor start executing 32-bit code? What exactly causes the switch from 16- to 32-bit mode?
+  > `movl %cr0, %eax; orl $1, %eax; movl %eax, %cr0`. set bit 0 of CR0 to 1.
+- What is the last instruction of the boot loader executed, and what is the first instruction of the kernel it just loaded?
+  > last instruction of boot loader: `7d6b: call   *0x10018 #((void (*)(void)) (ELFHDR->e_entry))()`.   
+  > first instruction of the kernel it just loaded: `0x10000c:    movw   $0x1234,0x472`
+- Where is the first instruction of the kernel?
+  > `0x10000c:    movw   $0x1234,0x472`, see kern/entry.S and obj/kern/kern.asm.
+- How does the boot loader decide how many sectors it must read in order to fetch the entire kernel from disk? Where does it find this information?
+  > totally 2 programs headers needed to load in kernel ELF image.   
+  > every program header has its memory size (0x0759d; 0x0b6a8), just read SECTORSIZE(512) until reaching the size. 
+
+### Part3: Loading the Kernel
+
