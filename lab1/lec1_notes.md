@@ -50,7 +50,7 @@ such as a floppy, hard drive, or CD-ROM. Eventually, when it finds a bootable di
 from the disk and transfers control to it.   
 
 ***[Exercise 2]***   
-use `si` to trace into ROM BIOS for a few instructions and gusess what it may be doing.
+use `si` to trace into ROM BIOS for a few instructions and guesses what it may be doing.
 
 term1: make qemu-nox-gdb   
 term2: make gdb   
